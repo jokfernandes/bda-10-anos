@@ -753,15 +753,12 @@
     68%{ transform:translateX(-2px); }
     82%{ transform:translateX(2px); }
   }
-  .mc-card.impact{
-    animation:cardImpactShake .5s ease;
+  .mc-card.legendary.impact{
+    animation:cardImpactShake .5s ease, impactFlash .7s ease;
   }
   @keyframes impactFlash{
     0%{ box-shadow:0 0 0 3px rgba(212,175,55,0.9), 0 0 60px 10px rgba(255,243,196,0.6); }
     100%{ box-shadow:0 0 0 1px rgba(212,175,55,0.3), 0 0 16px -6px rgba(212,175,55,0.45); }
-  }
-  .mc-card.legendary.impact{
-    animation:cardImpactShake .5s ease, impactFlash .7s ease;
   }
   .mc-name{
     font-family:var(--font-display);
@@ -1192,6 +1189,43 @@
     color:var(--copper-1);
     font-size:1em;
     margin:2px 0;
+  }
+
+  /* ---------- ROLETA DE CONFRONTO ---------- */
+  .roulette-spin .h2h-photo img{
+    filter:blur(0.5px);
+    animation:rouletteFlicker .12s ease-in-out infinite alternate;
+  }
+  @keyframes rouletteFlicker{
+    0%{ opacity:0.85; }
+    100%{ opacity:1; }
+  }
+  .roulette-spin .h2h-photo{
+    animation:roulettePulse .3s ease-in-out infinite alternate;
+  }
+  @keyframes roulettePulse{
+    0%{ box-shadow:0 0 0 0 rgba(240,168,105,0.25); }
+    100%{ box-shadow:0 0 16px 2px rgba(183,224,172,0.35); }
+  }
+  .roulette-spin .h2h-mid .vs{
+    display:inline-block;
+    animation:rouletteDiceSpin .5s linear infinite;
+  }
+  @keyframes rouletteDiceSpin{
+    0%{ transform:rotate(0deg) scale(1); }
+    50%{ transform:rotate(180deg) scale(1.2); }
+    100%{ transform:rotate(360deg) scale(1); }
+  }
+  .roulette-spin.landed .h2h-photo{
+    animation:none;
+    box-shadow:0 0 0 3px var(--sage-1), 0 0 30px 4px rgba(183,224,172,0.5);
+    transition:box-shadow .3s ease;
+  }
+  .roulette-spin.landed .h2h-photo img{
+    animation:none;opacity:1;filter:none;
+  }
+  .roulette-spin.landed .h2h-mid .vs{
+    animation:none;
   }
 
   .h2h-stat{ margin-bottom:20px; }
@@ -2589,10 +2623,12 @@ trioNav.innerHTML = `
       content.classList.add('drop-in');
 
       const isLegendary = card.classList.contains('legendary');
-      card.classList.remove('impact');
-      void card.offsetWidth;
-      card.classList.add('impact');
-      setTimeout(()=>card.classList.remove('impact'), isLegendary ? 700 : 500);
+      if(isLegendary){
+        card.classList.remove('impact');
+        void card.offsetWidth;
+        card.classList.add('impact');
+        setTimeout(()=>card.classList.remove('impact'), 700);
+      }
     }
   });
 })();
@@ -2862,13 +2898,61 @@ trioNav.innerHTML = `
       document.querySelectorAll('#compareModeToggle .mode-btn').forEach(b=>b.classList.toggle('active', b.dataset.mode === 'mc'));
       rebuildDropdowns();
     }
-    const shuffled = [...allMcs].sort(()=>Math.random()-0.5);
-    const [mcA, mcB] = shuffled.slice(0,2);
-    state.A = mcA; state.B = mcB;
-    selectByLabel('compareA', mcA, false);
-    selectByLabel('compareB', mcB, false);
-    render();
     document.getElementById('comparar').scrollIntoView({behavior:'smooth', block:'start'});
+
+    const shuffled = [...allMcs].sort(()=>Math.random()-0.5);
+    const [finalA, finalB] = shuffled.slice(0,2);
+
+    result.innerHTML = `
+      <div class="h2h roulette-spin">
+        <div class="h2h-top">
+          <div class="h2h-player side-a">
+            <div class="h2h-photo"><img id="rouletteImgA" src="${finalA.fotoUrl}" alt=""></div>
+            <div class="h2h-name" id="rouletteNameA">${finalA.nome}</div>
+          </div>
+          <div class="h2h-mid">
+            <div class="h2h-eyebrow">Sorteando…</div>
+            <div class="h2h-matchup"><span class="vs">🎲</span></div>
+          </div>
+          <div class="h2h-player side-b">
+            <div class="h2h-photo"><img id="rouletteImgB" src="${finalB.fotoUrl}" alt=""></div>
+            <div class="h2h-name" id="rouletteNameB">${finalB.nome}</div>
+          </div>
+        </div>
+      </div>`;
+
+    const imgA = document.getElementById('rouletteImgA');
+    const nameA = document.getElementById('rouletteNameA');
+    const imgB = document.getElementById('rouletteImgB');
+    const nameB = document.getElementById('rouletteNameB');
+
+    let tick = 0;
+    const maxTicks = 22;
+
+    function spinTick(){
+      tick++;
+      const last = tick >= maxTicks;
+      const mcA = last ? finalA : allMcs[Math.floor(Math.random()*allMcs.length)];
+      const mcB = last ? finalB : allMcs[Math.floor(Math.random()*allMcs.length)];
+      imgA.src = mcA.fotoUrl; nameA.textContent = mcA.nome;
+      imgB.src = mcB.fotoUrl; nameB.textContent = mcB.nome;
+
+      if(!last){
+        const progress = tick / maxTicks;
+        const delay = 55 + progress*progress*220; // acelera e desacelera até "parar"
+        setTimeout(spinTick, delay);
+      } else {
+        const wrap = document.querySelector('.roulette-spin');
+        if(wrap) wrap.classList.add('landed');
+        setTimeout(()=>{
+          state.A = finalA; state.B = finalB;
+          selectByLabel('compareA', finalA, false);
+          selectByLabel('compareB', finalB, false);
+          render();
+        }, 380);
+      }
+    }
+    spinTick();
   }
   window.__bdaRandomMatchup = randomMatchup;
 
