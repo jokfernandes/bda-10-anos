@@ -1,10 +1,8 @@
-# 🌳 Batalha da Aldeia — 10 Anos
+# Batalha da Aldeia — 10 Anos
 
 **Um hub completo pra acompanhar os 30 MCs da Batalha da Aldeia 10 Anos — trios, estatísticas, conquistas e as batalhas de destaque de cada competidor, tudo numa página só, sem sair pra lugar nenhum.**
 
 ### 🔗 [jokfernandes.github.io/bda-10-anos](https://jokfernandes.github.io/bda-10-anos/)
-
-![Cabeçalho do site](readme_shots/01_hero.png)
 
 ---
 
