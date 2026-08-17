@@ -2,7 +2,7 @@
 
 Site não oficial, feito por um fã, com o painel completo dos MCs da **Batalha da Aldeia 10 Anos** — trios, estatísticas, conquistas e as batalhas de destaque de cada competidor, tudo numa página só.
 
-🔗 **Site ao vivo:** _adicione aqui a URL depois de publicar no GitHub Pages_
+🔗 **Site ao vivo:** _https://jokfernandes.github.io/bda-10-anos/_
 
 ---
 
