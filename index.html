@@ -2044,7 +2044,7 @@ trioNav.innerHTML = `
     const opt = document.createElement('div');
     opt.className = 'mc-dropdown-option';
     opt.dataset.target = id;
-    opt.innerHTML = `<span>${trio.trio}</span><span class="opt-trio">${trio.mcs.map(m=>m.nome).join(', ')}</span>`;
+    opt.innerHTML = `<span>${shortTrioLabel(trio.trio)}</span><span class="opt-trio">${trio.mcs.map(m=>m.nome).join(', ')}</span>`;
     opt.addEventListener('click', ()=>{
       document.getElementById(id).scrollIntoView({behavior:'smooth'});
       wrap.classList.remove('open');
