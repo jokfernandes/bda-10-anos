@@ -8,7 +8,7 @@
 
 ## Por que esse site existe
 
-Acompanhar 10 (e contando) trios espalhados em posts, stories e planilhas é trabalhoso. Esse site junta tudo num lugar só: quem está em cada trio, quem manda mais no round de trio, quem é estreante, quem já é lenda — e ainda deixa você comparar dois MCs (ou dois trios inteiros) lado a lado, ou simplesmente sortear um confronto aleatório pra descobrir alguém novo.
+Acompanhar 11 (e contando) trios espalhados em posts, stories e planilhas é trabalhoso. Esse site junta tudo num lugar só: quem está em cada trio, quem manda mais no round de trio, quem é estreante, quem já é lenda — e ainda deixa você comparar dois MCs (ou dois trios inteiros) lado a lado, ou simplesmente sortear um confronto aleatório pra descobrir alguém novo.
 
 Não é o site oficial do evento — é um projeto de fã, feito pra ser rápido, bonito e útil tanto pra quem já acompanha de perto quanto pra quem está chegando agora.
 
