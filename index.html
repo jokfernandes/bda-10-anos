@@ -1126,7 +1126,38 @@
     display:flex;align-items:center;gap:10px;
     padding:8px 8px;margin:0 -8px;border-bottom:1px dashed var(--line);
     border-radius:5px;
+    cursor:pointer;
+    transition:background .2s ease;
   }
+  .ranking-row:hover{
+    background:rgba(183,224,172,0.1);
+  }
+  .ranking-row:hover .ranking-name{
+    color:var(--sage-1);
+    text-decoration:underline;
+    text-underline-offset:2px;
+  }
+  .ranking-row-extra{
+    display:none;
+  }
+  .ranking-card.expanded .ranking-row-extra{
+    display:flex;
+    animation:rankingRowIn .35s ease;
+  }
+  @keyframes rankingRowIn{
+    0%{ opacity:0; transform:translateY(-6px); }
+    100%{ opacity:1; transform:translateY(0); }
+  }
+  .ranking-toggle{
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    width:100%;margin-top:12px;padding:8px 0;
+    font-family:var(--font-mono);font-size:11px;color:var(--paper-dim);
+    background:none;border:1px dashed var(--line);border-radius:6px;
+    cursor:pointer;transition:all .2s ease;
+  }
+  .ranking-toggle:hover{ color:var(--paper);border-color:var(--sage-1); }
+  .ranking-toggle svg{ width:12px;height:12px;transition:transform .3s ease; }
+  .ranking-card.expanded .ranking-toggle svg{ transform:rotate(180deg); }
   .ranking-row:last-child{ border-bottom:none; }
   .ranking-row.rank-1{
     background:linear-gradient(90deg, rgba(212,175,55,0.16), rgba(212,175,55,0.02));
@@ -1686,7 +1717,7 @@ function mcCard(mc, opts){
 
   const videoId = mc.videoId;
   const videoThumb = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : '';
-  const isLegendary = mc.mvpLabel || mc.campeaoAtual || mc.legendaryHighlight;
+  const isLegendary = mc.mvpLabel || mc.campeaoAtual || mc.legendaryHighlight || mc.campeao;
   const isSeletivaHighlight = mc.seletivaRua && !isLegendary;
   const isEstreanteGlow = mc.estreante && !isLegendary && !isSeletivaHighlight;
   const extraCardClass = (isLegendary ? ' legendary' : '') + (isSeletivaHighlight ? ' seletiva-highlight' : '') + (isEstreanteGlow ? ' estreante-glow' : '');
@@ -2780,62 +2811,86 @@ trioNav.innerHTML = `
   const grid = document.getElementById('rankingGrid');
 
   const crownSvg = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm0 2h14v2H5v-2z"/></svg>`;
+  const chevronSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>`;
 
   function rankingCard(title, sub, items, formatter){
     if(items.length === 0){
       return `<div class="ranking-card"><div class="ranking-card-title">${title}</div><div class="ranking-card-sub">${sub}</div><div class="compare-placeholder">Sem dados suficientes ainda</div></div>`;
     }
     const rows = items.map((mc, i)=>`
-      <div class="ranking-row rank-${i+1}">
+      <div class="ranking-row rank-${i+1}${i>=5 ? ' ranking-row-extra' : ''}" data-slug="${mc.slug}">
         <div class="ranking-rank">${i===0 ? crownSvg : i+1}</div>
         <div class="ranking-photo"><img src="${mc.fotoUrl}" alt="${mc.nome}" loading="lazy"></div>
         <div class="ranking-name">${mc.nome}</div>
         <div class="ranking-value">${formatter(mc)}</div>
       </div>`).join('');
-    return `<div class="ranking-card"><div class="ranking-card-title">${title}</div><div class="ranking-card-sub">${sub}</div>${rows}</div>`;
+    const toggle = items.length > 5 ? `
+      <button type="button" class="ranking-toggle">
+        <span>Ver mais</span>${chevronSvg}
+      </button>` : '';
+    return `<div class="ranking-card"><div class="ranking-card-title">${title}</div><div class="ranking-card-sub">${sub}</div>${rows}${toggle}</div>`;
   }
 
   function totalRoundsDisp(m){
     return (m.roundsTrioDisp || 0) + (m.roundsIndDisp || 0);
   }
 
-  // Top 5 títulos de aniversário — desempate: mais participações, depois mais rounds disputados
+  // Top 10 títulos de aniversário — desempate: mais participações, depois mais rounds disputados
   const byTitulosAniv = allMcs.filter(m => m.titulosAniv != null)
     .sort((a,b)=>
       (b.titulosAniv - a.titulosAniv) ||
       ((b.participacoesAniv||0) - (a.participacoesAniv||0)) ||
       (totalRoundsDisp(b) - totalRoundsDisp(a))
-    ).slice(0,5);
+    ).slice(0,10);
 
-  // Top 5 participações em aniversário — desempate: mais títulos, depois mais rounds disputados
+  // Top 10 participações em aniversário — desempate: mais títulos, depois mais rounds disputados
   const byParticipacoesAniv = allMcs.filter(m => m.participacoesAniv != null)
     .sort((a,b)=>
       (b.participacoesAniv - a.participacoesAniv) ||
       ((b.titulosAniv||0) - (a.titulosAniv||0)) ||
       (totalRoundsDisp(b) - totalRoundsDisp(a))
-    ).slice(0,5);
+    ).slice(0,10);
 
-  // Top 5 aproveitamento em rounds de trio — desempate: mais rounds de trio disputados, depois mais vencidos
+  // Top 10 aproveitamento em rounds de trio — desempate: mais rounds de trio disputados, depois mais vencidos
   const byAproveitamentoTrio = allMcs.filter(m => m.aproveitTrio != null)
     .sort((a,b)=>
       (b.aproveitTrio - a.aproveitTrio) ||
       ((b.roundsTrioDisp||0) - (a.roundsTrioDisp||0)) ||
       ((b.roundsTrioGanhos||0) - (a.roundsTrioGanhos||0))
-    ).slice(0,5);
+    ).slice(0,10);
 
-  // Top 5 aproveitamento em rounds individuais — desempate: mais rounds individuais disputados, depois mais vencidos
+  // Top 10 aproveitamento em rounds individuais — desempate: mais rounds individuais disputados, depois mais vencidos
   const byAproveitamentoInd = allMcs.filter(m => m.aproveitInd != null)
     .sort((a,b)=>
       (b.aproveitInd - a.aproveitInd) ||
       ((b.roundsIndDisp||0) - (a.roundsIndDisp||0)) ||
       ((b.roundsIndGanhos||0) - (a.roundsIndGanhos||0))
-    ).slice(0,5);
+    ).slice(0,10);
 
   grid.innerHTML =
     rankingCard('Mais Títulos', 'De aniversário', byTitulosAniv, mc=>mc.titulosAniv) +
     rankingCard('Mais Participações', 'Em aniversário', byParticipacoesAniv, mc=>mc.participacoesAniv) +
     rankingCard('Maior Aproveitamento', 'Rounds de trio', byAproveitamentoTrio, mc=>Math.round(mc.aproveitTrio*100)+'%') +
     rankingCard('Maior Aproveitamento', 'Rounds individuais', byAproveitamentoInd, mc=>Math.round(mc.aproveitInd*100)+'%');
+
+  // Clique numa linha leva até o card do MC
+  grid.addEventListener('click', (e)=>{
+    const toggleBtn = e.target.closest('.ranking-toggle');
+    if(toggleBtn){
+      const card = toggleBtn.closest('.ranking-card');
+      const expanded = card.classList.toggle('expanded');
+      toggleBtn.querySelector('span').textContent = expanded ? 'Ver menos' : 'Ver mais';
+      return;
+    }
+    const row = e.target.closest('.ranking-row');
+    if(!row) return;
+    const target = document.getElementById('mc-'+row.dataset.slug);
+    if(target){
+      target.scrollIntoView({behavior:'smooth', block:'center'});
+      target.classList.add('search-flash');
+      setTimeout(()=>target.classList.remove('search-flash'), 1600);
+    }
+  });
 })();
 
 (function initCompare(){
