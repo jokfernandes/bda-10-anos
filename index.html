@@ -1199,7 +1199,12 @@
   }
   .ranking-value{
     font-family:var(--font-display);font-size:15px;color:var(--paper);
-    flex:0 0 auto;
+    flex:0 0 auto;text-align:right;
+  }
+  .ranking-value .ranking-value-frac{
+    display:block;
+    font-family:var(--font-mono);font-size:10px;color:var(--paper-dim);
+    font-weight:normal;letter-spacing:0.3px;margin-top:1px;
   }
   .ranking-row.rank-1 .ranking-value{ font-size:19px;color:var(--gold-1); }
 
@@ -2874,8 +2879,8 @@ trioNav.innerHTML = `
   grid.innerHTML =
     rankingCard('Mais Títulos', 'De aniversário', byTitulosAniv, mc=>mc.titulosAniv) +
     rankingCard('Mais Participações', 'Em aniversário', byParticipacoesAniv, mc=>mc.participacoesAniv) +
-    rankingCard('Maior Aproveitamento', 'Rounds de trio', byAproveitamentoTrio, mc=>Math.round(mc.aproveitTrio*100)+'%') +
-    rankingCard('Maior Aproveitamento', 'Rounds individuais', byAproveitamentoInd, mc=>Math.round(mc.aproveitInd*100)+'%');
+    rankingCard('Maior Aproveitamento', 'Rounds de trio', byAproveitamentoTrio, mc=>`${Math.round(mc.aproveitTrio*100)}%<span class="ranking-value-frac">${mc.roundsTrioGanhos}/${mc.roundsTrioDisp}</span>`) +
+    rankingCard('Maior Aproveitamento', 'Rounds individuais', byAproveitamentoInd, mc=>`${Math.round(mc.aproveitInd*100)}%<span class="ranking-value-frac">${mc.roundsIndGanhos}/${mc.roundsIndDisp}</span>`);
 
   // Clique numa linha leva até o card do MC
   grid.addEventListener('click', (e)=>{
