@@ -186,83 +186,155 @@
     margin-top:18px;
   }
 
-  /* ---------- CHAVE EM ANDAMENTO ---------- */
+  /* ---------- GRADE DE ELIMINAÇÃO ---------- */
   .bt-bracket{
     max-width:1180px;margin:0 auto;padding:0 20px 50px;
     display:none;
   }
   .bt-bracket.show{ display:block; }
+  .bt-bracket-head{
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    margin-bottom:16px;flex-wrap:wrap;
+  }
   .bt-bracket-title{
     font-family:var(--font-mono);font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;
-    color:var(--paper-dim);opacity:0.75;margin-bottom:14px;text-align:center;
+    color:var(--paper-dim);opacity:0.75;
   }
-  .bt-bracket-rounds{
-    display:flex;gap:16px;overflow-x:auto;padding-bottom:8px;
-    scrollbar-width:thin;
+  .bt-alive-count{
+    font-family:var(--font-mono);font-size:11px;
+    color:var(--sage-1);background:rgba(183,224,172,0.1);
+    border:1px solid rgba(183,224,172,0.3);border-radius:999px;padding:4px 12px;
   }
-  .bt-bracket-col{
-    flex:0 0 150px;
-    background:var(--card);border:1px solid var(--line);border-radius:8px;
-    padding:10px;
+  .bt-grid{
+    display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
   }
-  .bt-bracket-col-title{
-    font-family:var(--font-display);font-size:12px;text-transform:uppercase;
-    color:var(--paper-dim);text-align:center;margin-bottom:8px;
-    padding-bottom:6px;border-bottom:1px dashed var(--line);
+  .bt-grid-item{
+    position:relative;width:62px;height:62px;border-radius:50%;overflow:hidden;
+    border:2px solid var(--line);
+    transition:filter .5s ease, opacity .5s ease, transform .4s ease, border-color .4s ease;
   }
-  .bt-bracket-chip{
-    display:flex;align-items:center;gap:7px;
-    padding:5px 4px;border-radius:5px;
-    animation:btChipIn .35s ease;
+  .bt-grid-item img{ width:100%;height:100%;object-fit:cover;object-position:center 15%;display:block; }
+  .bt-grid-item.alive{ border-color:rgba(183,224,172,0.5); }
+  .bt-grid-item.eliminated{
+    filter:grayscale(1) brightness(0.4);opacity:0.45;transform:scale(0.9);
+    border-color:var(--line);
   }
-  @keyframes btChipIn{
-    0%{ opacity:0;transform:translateX(-8px); }
-    100%{ opacity:1;transform:translateX(0); }
+  .bt-grid-item.eliminated::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(135deg, transparent 46%, rgba(240,168,105,0.7) 46%, rgba(240,168,105,0.7) 54%, transparent 54%);
   }
-  .bt-bracket-chip img{
-    width:24px;height:24px;border-radius:50%;object-fit:cover;object-position:center 15%;
-    flex:0 0 auto;border:1px solid var(--line);
+  .bt-grid-item.fighting{
+    border-color:var(--gold-2);transform:scale(1.12);
+    box-shadow:0 0 0 2px rgba(212,175,55,0.4), 0 0 18px 2px rgba(212,175,55,0.45);
+    animation:btFightPulse 1.4s ease-in-out infinite;
   }
-  .bt-bracket-chip span{
-    font-family:var(--font-mono);font-size:10.5px;color:var(--paper);
-    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  @keyframes btFightPulse{
+    0%,100%{ box-shadow:0 0 0 2px rgba(212,175,55,0.35), 0 0 14px 1px rgba(212,175,55,0.35); }
+    50%{ box-shadow:0 0 0 2px rgba(212,175,55,0.7), 0 0 24px 4px rgba(212,175,55,0.6); }
   }
-  .bt-bracket-col.final-col .bt-bracket-chip{
-    background:linear-gradient(90deg, rgba(212,175,55,0.18), transparent);
+  .bt-grid-item.just-eliminated{ animation:btEliminate .55s ease; }
+  @keyframes btEliminate{
+    0%{ transform:scale(1.12); }
+    35%{ transform:scale(1.2) rotate(-4deg); }
+    100%{ transform:scale(0.9) rotate(0); }
   }
-  .bt-bracket-col.final-col .bt-bracket-chip span{ color:var(--gold-1);font-weight:700; }
+  @media (max-width:600px){
+    .bt-grid-item{ width:48px;height:48px; }
+  }
 
   /* ---------- CAMPEÃO ---------- */
-  .bt-champion{ display:none;text-align:center; }
+  .bt-champion{ display:none;text-align:center;position:relative;padding:40px 20px 0; }
   .bt-champion.show{ display:block; }
-  .bt-champion-icon{ font-size:38px;margin-bottom:10px; }
+  .bt-champion-glow{
+    position:absolute;top:-40px;left:50%;transform:translateX(-50%);
+    width:min(900px, 120vw);height:620px;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at center, rgba(212,175,55,0.28), rgba(212,175,55,0.08) 42%, transparent 70%);
+    animation:btGlowPulse 3.2s ease-in-out infinite;
+  }
+  @keyframes btGlowPulse{
+    0%,100%{ opacity:0.65;transform:translateX(-50%) scale(0.96); }
+    50%{ opacity:1;transform:translateX(-50%) scale(1.05); }
+  }
+  .bt-rays{
+    position:absolute;top:20px;left:50%;transform:translateX(-50%);
+    width:520px;height:520px;pointer-events:none;z-index:0;opacity:0.22;
+    background:repeating-conic-gradient(from 0deg,
+      rgba(255,243,196,0.55) 0deg 6deg, transparent 6deg 22deg);
+    border-radius:50%;
+    mask-image:radial-gradient(circle, black 20%, transparent 68%);
+    -webkit-mask-image:radial-gradient(circle, black 20%, transparent 68%);
+    animation:btRaysSpin 22s linear infinite;
+  }
+  @keyframes btRaysSpin{ to{ transform:translateX(-50%) rotate(360deg); } }
+  .bt-champion > *:not(.bt-champion-glow):not(.bt-rays){ position:relative;z-index:1; }
+
+  .bt-champion-icon{ font-size:44px;margin-bottom:8px;animation:btTrophy 2.4s ease-in-out infinite; }
+  @keyframes btTrophy{
+    0%,100%{ transform:translateY(0) rotate(-3deg); }
+    50%{ transform:translateY(-8px) rotate(3deg); }
+  }
   .bt-champion-label{
-    font-family:var(--font-mono);font-size:12px;letter-spacing:2px;color:var(--paper-dim);
-    text-transform:uppercase;margin-bottom:12px;
+    font-family:var(--font-mono);font-size:12px;letter-spacing:3px;color:var(--gold-2);
+    text-transform:uppercase;margin-bottom:16px;
   }
   .bt-champion-card{
-    max-width:280px;margin:0 auto 26px;
+    max-width:300px;margin:0 auto 26px;
     background:var(--card);border-radius:14px;overflow:hidden;
     border:2px solid var(--gold-2);
-    box-shadow:0 0 0 1px rgba(212,175,55,0.5), 0 0 60px 10px rgba(212,175,55,0.35);
-    animation:btChampionPulse 2.6s ease-in-out infinite;
+    animation:btChampionPulse 2.6s ease-in-out infinite, btChampionIn .9s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes btChampionIn{
+    0%{ opacity:0;transform:translateY(-40px) scale(0.86); }
+    60%{ transform:translateY(10px) scale(1.03); }
+    100%{ opacity:1;transform:translateY(0) scale(1); }
   }
   @keyframes btChampionPulse{
-    0%,100%{ box-shadow:0 0 0 1px rgba(212,175,55,0.4), 0 0 40px 6px rgba(212,175,55,0.25); }
-    50%{ box-shadow:0 0 0 1px rgba(212,175,55,0.7), 0 0 70px 14px rgba(212,175,55,0.5); }
+    0%,100%{ box-shadow:0 0 0 1px rgba(212,175,55,0.45), 0 0 46px 8px rgba(212,175,55,0.3); }
+    50%{ box-shadow:0 0 0 2px rgba(212,175,55,0.85), 0 0 86px 18px rgba(212,175,55,0.55); }
   }
+  .bt-champion-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:3px;z-index:3;
+    background:linear-gradient(90deg, var(--gold-3), var(--gold-1), var(--gold-2), var(--gold-1), var(--gold-3));
+    background-size:250% 100%;animation:btShimmer 2.6s linear infinite;
+  }
+  @keyframes btShimmer{ 0%{background-position:0% 50%;} 100%{background-position:250% 50%;} }
+  .bt-champion-card{ position:relative; }
   .bt-champion-card .bt-fighter-photo{ aspect-ratio:4/5; }
   .bt-champion-card.trio-champion .bt-fighter-photo{ aspect-ratio:5/4; }
   .bt-champion-card .bt-fighter-name{ font-size:26px;color:var(--gold-1); }
   .bt-champion-title{
     font-family:var(--font-display);font-size:clamp(26px,5vw,40px);text-transform:uppercase;
-    margin-bottom:26px;
+    margin-bottom:8px;
   }
   .bt-champion-title span{
     background:linear-gradient(90deg, var(--gold-1), var(--gold-2));
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
 
+  /* ---------- CAMINHO PARA A VITÓRIA ---------- */
+  .bt-path{
+    max-width:640px;margin:26px auto 30px;
+    background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;
+  }
+  .bt-path-title{
+    font-family:var(--font-mono);font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;
+    color:var(--paper-dim);opacity:0.8;margin-bottom:14px;
+  }
+  .bt-path-list{ display:flex;flex-wrap:wrap;gap:8px;justify-content:center; }
+  .bt-path-item{
+    display:flex;align-items:center;gap:7px;
+    background:var(--bg-raised);border:1px solid var(--line);border-radius:999px;
+    padding:5px 12px 5px 5px;
+    animation:btPathIn .4s ease backwards;
+  }
+  @keyframes btPathIn{ 0%{opacity:0;transform:translateY(6px);} 100%{opacity:1;transform:translateY(0);} }
+  .bt-path-item img{
+    width:26px;height:26px;border-radius:50%;object-fit:cover;object-position:center 15%;
+    border:1px solid var(--line);
+  }
+  .bt-path-item span{ font-family:var(--font-mono);font-size:11.5px;color:var(--paper); }
+
+  footer{
   footer{
     max-width:1180px;margin:40px auto 0;padding:0 20px 50px;
     text-align:center;
@@ -313,15 +385,21 @@
 </div>
 
 <div class="bt-bracket" id="btBracket">
-  <div class="bt-bracket-title">Chave em andamento</div>
-  <div class="bt-bracket-rounds" id="btBracketRounds"></div>
+  <div class="bt-bracket-head">
+    <span class="bt-bracket-title">Quem ainda está na disputa</span>
+    <span class="bt-alive-count" id="btAliveCount"></span>
+  </div>
+  <div class="bt-grid" id="btGrid"></div>
 </div>
 
 <div class="bt-champion" id="btChampion">
+  <div class="bt-champion-glow"></div>
+  <div class="bt-rays"></div>
   <div class="bt-champion-icon">🏆</div>
   <div class="bt-champion-label">Temos um campeão</div>
   <div class="bt-champion-card" id="btChampionCard"></div>
   <div class="bt-champion-title">Parabéns, <span id="btChampionName"></span>!</div>
+  <div class="bt-path" id="btPath"></div>
   <button type="button" class="bt-start-btn" id="btPlayAgainBtn">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>
     Jogar novamente
@@ -335,7 +413,7 @@
 </footer>
 
 <script>
-const DATA = [{"trio": "Primeiro Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Sid.png", "mcs": [{"nome": "Sid", "slug": "sid", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Sid.png"}, {"nome": "Gomes", "slug": "gomes", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Gomes.png"}, {"nome": "Tito", "slug": "tito", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Tito.png"}]}, {"trio": "Segundo Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Ajota.png", "mcs": [{"nome": "Zap", "slug": "zap", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Zap.png"}, {"nome": "Ajota", "slug": "ajota", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Ajota.png"}, {"nome": "Menor", "slug": "menor", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Menor.png"}]}, {"trio": "Terceiro Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Devilzinha.png", "mcs": [{"nome": "Devilzinha", "slug": "devilzinha", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Devilzinha.png"}, {"nome": "Naia", "slug": "naia", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Naia.png"}, {"nome": "Sofia", "slug": "sofia", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Sofia.png"}]}, {"trio": "Quarto Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Dudu.png", "mcs": [{"nome": "Thiago", "slug": "thiago", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Thiago.png"}, {"nome": "Dudu", "slug": "dudu", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Dudu.png"}, {"nome": "Jaya", "slug": "jaya", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Jaya.png"}]}, {"trio": "Quinto Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Grafiteh.png", "mcs": [{"nome": "MT", "slug": "mt", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/MT.png"}, {"nome": "Grafiteh", "slug": "grafiteh", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Grafiteh.png"}, {"nome": "Vitu", "slug": "vitu", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Vitu.png"}]}, {"trio": "Sexto Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Jhony.png", "mcs": [{"nome": "Jhony", "slug": "johny", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Jhony.png"}, {"nome": "Torvi", "slug": "torvi", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Torvi.png"}, {"nome": "Malagueta", "slug": "malagueta", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Malagueta.png"}]}, {"trio": "Sétimo Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20WM.png", "mcs": [{"nome": "WM", "slug": "wm", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/WM.png"}, {"nome": "Valle", "slug": "valle", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Valle.png"}, {"nome": "Acuca", "slug": "acuca", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Acuca.png"}]}, {"trio": "Oitavo Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Neo.png", "mcs": [{"nome": "Neo", "slug": "neo", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Neo.png"}, {"nome": "Japa", "slug": "japa", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Japa.png"}, {"nome": "Levinsk", "slug": "levinsk", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Levinsk.png"}]}, {"trio": "Nono Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Kaemy.png", "mcs": [{"nome": "Kaemy", "slug": "kaemy", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Kaemy.png"}, {"nome": "Winnit", "slug": "winnit", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Winnit.png"}, {"nome": "Vinicius ZN", "slug": "vinicius-zn", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Vinicius%20ZN.png"}]}, {"trio": "Décimo Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Jotap%C3%AA.png", "mcs": [{"nome": "Jotapê", "slug": "jotap", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Jotap%C3%AA.png"}, {"nome": "Apollo", "slug": "apollo", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Apollo.png"}, {"nome": "Negrote", "slug": "negrote", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Negrote.png"}]}, {"trio": "Décimo Primeiro Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Baueb.png", "mcs": [{"nome": "Baueb", "slug": "baueb", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Baueb.png"}, {"nome": "Luh do Click", "slug": "luh-do-click", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Luh.png"}, {"nome": "Mano Ayron", "slug": "mano-ayron", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Mano.png"}]}, {"trio": "Décimo Segundo Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Araps.png", "mcs": [{"nome": "Araps", "slug": "araps", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Araps.png"}, {"nome": "Ravena", "slug": "ravena", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Ravena.png"}, {"nome": "WL BXD", "slug": "wl-bxd", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/WL%20BXD.png"}]}, {"trio": "Décimo Terceiro Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Bask.png", "mcs": [{"nome": "Bask", "slug": "bask", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Bask.png"}, {"nome": "Xamuel", "slug": "xamuel", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Xamuel.png"}, {"nome": "Brennuz", "slug": "brennuz", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Brennuz.png"}]}];
+const DATA = [{"trio": "Primeiro Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Sid.png", "mcs": [{"nome": "Sid", "slug": "sid", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Sid.png"}, {"nome": "Gomes", "slug": "gomes", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Gomes.png"}, {"nome": "Tito", "slug": "tito", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Tito.png"}]}, {"trio": "Segundo Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Ajota.png", "mcs": [{"nome": "Zap", "slug": "zap", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Zap.png"}, {"nome": "Ajota", "slug": "ajota", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Ajota.png"}, {"nome": "Menor", "slug": "menor", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Menor.png"}]}, {"trio": "Terceiro Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Devilzinha.png", "mcs": [{"nome": "Devilzinha", "slug": "devilzinha", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Devilzinha.png"}, {"nome": "Naia", "slug": "naia", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Naia.png"}, {"nome": "Sofia", "slug": "sofia", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Sofia.png"}]}, {"trio": "Quarto Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Dudu.png", "mcs": [{"nome": "Thiago", "slug": "thiago", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Thiago.png"}, {"nome": "Dudu", "slug": "dudu", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Dudu.png"}, {"nome": "Jaya", "slug": "jaya", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Jaya.png"}]}, {"trio": "Quinto Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Grafiteh.png", "mcs": [{"nome": "MT", "slug": "mt", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/MT.png"}, {"nome": "Grafiteh", "slug": "grafiteh", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Grafiteh.png"}, {"nome": "Vitu", "slug": "vitu", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Vitu.png"}]}, {"trio": "Sexto Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Jhony.png", "mcs": [{"nome": "Jhony", "slug": "johny", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Jhony.png"}, {"nome": "Torvi", "slug": "torvi", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Torvi.png"}, {"nome": "Malagueta", "slug": "malagueta", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Malagueta.png"}]}, {"trio": "Sétimo Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20WM.png", "mcs": [{"nome": "WM", "slug": "wm", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/WM.png"}, {"nome": "Valle", "slug": "valle", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Valle.png"}, {"nome": "Acuca", "slug": "acuca", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Acuca.png"}]}, {"trio": "Oitavo Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Neo.png", "mcs": [{"nome": "Neo", "slug": "neo", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Neo.png"}, {"nome": "Japa", "slug": "japa", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Japa.png"}, {"nome": "Levinsk", "slug": "levinsk", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Levinsk.png"}]}, {"trio": "Nono Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Kaemy.png", "mcs": [{"nome": "Kaemy", "slug": "kaemy", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Kaemy.png"}, {"nome": "Winnit", "slug": "winnit", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Winnit.png"}, {"nome": "Vinicius ZN", "slug": "vinicius-zn", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Vinicius%20ZN.png"}]}, {"trio": "Décimo Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Jotap%C3%AA.png", "mcs": [{"nome": "Jotapê", "slug": "jotap", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Jotap%C3%AA.png"}, {"nome": "Apollo", "slug": "apollo", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Apollo.png"}, {"nome": "Negrote", "slug": "negrote", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Negrote.png"}]}, {"trio": "Décimo Primeiro Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Baueb.png", "mcs": [{"nome": "Baueb", "slug": "baueb", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Baueb.png"}, {"nome": "Luh do Click", "slug": "luh-do-click", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Luh.png"}, {"nome": "Mano Ayron", "slug": "mano-ayron", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Mano.png"}]}, {"trio": "Décimo Segundo Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Araps.png", "mcs": [{"nome": "Araps", "slug": "araps", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Araps.png"}, {"nome": "Ravena", "slug": "ravena", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Ravena.png"}, {"nome": "WL BXD", "slug": "wl-bxd", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/WL%20BXD.png"}]}, {"trio": "Décimo Terceiro Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Bask.png", "mcs": [{"nome": "Bask", "slug": "bask", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Bask.png"}, {"nome": "Xamuel", "slug": "xamuel", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Xamuel.png"}, {"nome": "Brennuz", "slug": "brennuz", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Brennuz.png"}]}, {"trio": "Décimo Quarto Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Cesar.png", "mcs": [{"nome": "Cesar", "slug": "cesar", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Cesar.png"}, {"nome": "Big Mike", "slug": "big-mike", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Big.png"}, {"nome": "Barreto", "slug": "barreto", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Barreto.png"}]}];
 
 let mode = 'mc';
 let bracket = [];
@@ -344,8 +422,10 @@ let matchIndex = 0;
 let roundSizeAtStart = 0;
 let totalMatchesInRound = 0;
 let matchesDoneInRound = 0;
-let bracketRounds = [];
-let currentRoundIndex = 0;
+let allItems = [];
+let eliminated = new Set();
+let defeatedBy = {};   // id do vencedor -> lista de derrotados
+let currentFightIds = [];
 
 function allMcs(){ return DATA.flatMap(t=>t.mcs); }
 function itemsForMode(){
@@ -389,14 +469,16 @@ function startBattle(){
   roundSizeAtStart = bracket.length;
   totalMatchesInRound = bracket.length/2;
   matchesDoneInRound = 0;
-  bracketRounds = [];
-  currentRoundIndex = 0;
+  allItems = items;
+  eliminated = new Set();
+  defeatedBy = {};
+  currentFightIds = [];
 
   document.getElementById('btHero').style.display = 'none';
   document.getElementById('btChampion').classList.remove('show');
   document.getElementById('btArena').classList.add('show');
   document.getElementById('btBracket').classList.add('show');
-  document.getElementById('btBracketRounds').innerHTML = '';
+  renderGrid();
 
   processCurrentMatch();
 }
@@ -421,27 +503,27 @@ function processCurrentMatch(){
     matchIndex = 0;
     totalMatchesInRound = bracket.length/2;
     matchesDoneInRound = 0;
-    currentRoundIndex++;
   }
   const a = bracket[matchIndex*2];
   const b = bracket[matchIndex*2+1];
-  if(a === null){ advance(b, false); return; }
-  if(b === null){ advance(a, false); return; }
+  if(a === null){ advance(b, false, null); return; }
+  if(b === null){ advance(a, false, null); return; }
   renderMatch(a,b);
 }
 
-function advance(winner, wasChosen){
+function advance(winner, wasChosen, loser){
   if(!winner){ // proteção: nunca deve acontecer, mas evita travar a chave
     matchIndex++;
     matchesDoneInRound++;
     processCurrentMatch();
     return;
   }
-  // Só entram na chave os vencedores escolhidos pelo usuário (byes passam direto, sem registro)
-  if(wasChosen){
-    if(!bracketRounds[currentRoundIndex]) bracketRounds[currentRoundIndex] = [];
-    bracketRounds[currentRoundIndex].push(winner);
-    renderBracketPanel();
+  if(wasChosen && loser){
+    eliminated.add(loser.id);
+    if(!defeatedBy[winner.id]) defeatedBy[winner.id] = [];
+    defeatedBy[winner.id].push(loser);
+    // herda o caminho de quem o derrotado já tinha vencido? não — só derrotas diretas
+    renderGrid(loser.id);
   }
 
   nextRoundWinners.push(winner);
@@ -450,21 +532,22 @@ function advance(winner, wasChosen){
   processCurrentMatch();
 }
 
-function renderBracketPanel(){
-  const wrap = document.getElementById('btBracketRounds');
-  wrap.innerHTML = bracketRounds.map((winners, i)=>{
-    if(!winners || winners.length === 0) return '';
-    const roundInputSize = roundSizeAtStart / Math.pow(2, i);
-    const label = roundLabel(roundInputSize);
-    const isFinalCol = roundInputSize === 2;
-    const chips = winners.map(w => `
-      <div class="bt-bracket-chip">
-        <img src="${w.photo}" alt="${w.name}" loading="lazy">
-        <span>${w.name}</span>
-      </div>`).join('');
-    return `<div class="bt-bracket-col${isFinalCol ? ' final-col' : ''}"><div class="bt-bracket-col-title">${label}</div>${chips}</div>`;
+function renderGrid(justEliminatedId){
+  const grid = document.getElementById('btGrid');
+  const aliveCount = allItems.length - eliminated.size;
+  document.getElementById('btAliveCount').textContent = `${aliveCount} de ${allItems.length} na disputa`;
+
+  grid.innerHTML = allItems.map(it=>{
+    const isOut = eliminated.has(it.id);
+    const isFighting = !isOut && currentFightIds.includes(it.id);
+    const cls = [
+      'bt-grid-item',
+      isOut ? 'eliminated' : 'alive',
+      isFighting ? 'fighting' : '',
+      it.id === justEliminatedId ? 'just-eliminated' : ''
+    ].filter(Boolean).join(' ');
+    return `<div class="${cls}" title="${it.name}"><img src="${it.photo}" alt="${it.name}" loading="lazy"></div>`;
   }).join('');
-  wrap.scrollLeft = wrap.scrollWidth;
 }
 
 function fighterCardHTML(item, side){
@@ -482,6 +565,9 @@ function renderMatch(a, b){
   const pct = totalMatchesInRound > 0 ? Math.round((matchesDoneInRound/totalMatchesInRound)*100) : 0;
   document.getElementById('btProgressFill').style.width = pct+'%';
 
+  currentFightIds = [a.id, b.id];
+  renderGrid();
+
   const wrap = document.getElementById('btMatchup');
   wrap.innerHTML =
     fighterCardHTML(a, 'a') +
@@ -491,23 +577,47 @@ function renderMatch(a, b){
   wrap.querySelectorAll('.bt-fighter').forEach(el=>{
     el.addEventListener('click', ()=>{
       const winner = el.dataset.pick === 'a' ? a : b;
+      const loser  = el.dataset.pick === 'a' ? b : a;
       const loserEl = wrap.querySelector(el.dataset.pick === 'a' ? '.side-b' : '.side-a');
       el.classList.add('chosen');
       if(loserEl) loserEl.classList.add('rejected');
-      setTimeout(()=>advance(winner, true), 550);
+      currentFightIds = [];
+      setTimeout(()=>advance(winner, true, loser), 550);
     }, { once:true });
   });
 }
 
 function renderChampion(champion){
   document.getElementById('btArena').classList.remove('show');
+  document.getElementById('btBracket').classList.remove('show');
+
   const card = document.getElementById('btChampionCard');
   card.className = 'bt-champion-card' + (champion.isTrio ? ' trio-champion' : '');
   card.innerHTML = `
     <div class="bt-fighter-photo"><img src="${champion.photo}" alt="${champion.name}"></div>
     <div class="bt-fighter-name">${champion.name}</div>`;
   document.getElementById('btChampionName').textContent = champion.name;
+
+  // Caminho para a vitória: todos que o campeão derrotou, na ordem
+  const beaten = defeatedBy[champion.id] || [];
+  const pathEl = document.getElementById('btPath');
+  if(beaten.length){
+    pathEl.style.display = '';
+    pathEl.innerHTML = `
+      <div class="bt-path-title">Caminho para a vitória — ${beaten.length} ${beaten.length === 1 ? 'confronto vencido' : 'confrontos vencidos'}</div>
+      <div class="bt-path-list">
+        ${beaten.map((b,i)=>`
+          <div class="bt-path-item" style="animation-delay:${i*0.07}s">
+            <img src="${b.photo}" alt="${b.name}" loading="lazy">
+            <span>${b.name}</span>
+          </div>`).join('')}
+      </div>`;
+  } else {
+    pathEl.style.display = 'none';
+  }
+
   document.getElementById('btChampion').classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
 </body>
