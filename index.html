@@ -117,6 +117,15 @@
   }
   .topnav-links a:hover{color:#0a0a0b;background:var(--sage-1);}
   .topnav-links a.active{color:#0a0a0b;background:var(--copper-1);}
+  .topnav-links a.cta-btn{
+    background:linear-gradient(90deg, var(--copper-1), var(--copper-2));
+    color:#0a0a0b;font-weight:700;border-radius:999px;padding:8px 16px;
+    margin-left:2px;transition:filter .2s ease;
+  }
+  .topnav-links a.cta-btn:hover{
+    background:linear-gradient(90deg, var(--copper-1), var(--copper-2));
+    filter:brightness(1.1);color:#0a0a0b;
+  }
 
   /* ---------- NAV: TRIO DROPDOWN ---------- */
   .nav-trio-dropdown{
@@ -1074,6 +1083,40 @@
   .roulette-btn.spinning svg{ transform:rotate(360deg); }
 
   /* ---------- RANKING / HALL DA FAMA ---------- */
+  /* ---------- PROMO: TIER LIST ---------- */
+  .tierlist-promo{
+    max-width:1180px;margin:56px auto 40px;padding:26px 20px;
+    display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+    background:linear-gradient(90deg, rgba(240,168,105,0.08), rgba(183,224,172,0.05));
+    border:1px solid var(--line);border-radius:12px;
+  }
+  .tierlist-promo-eyebrow{
+    display:inline-block;font-family:var(--font-mono);font-size:9.5px;letter-spacing:1px;
+    text-transform:uppercase;color:#0a0a0b;background:var(--sage-1);
+    padding:3px 9px;border-radius:999px;margin-bottom:8px;
+  }
+  .tierlist-promo h3{
+    font-family:var(--font-display);font-size:20px;text-transform:uppercase;
+    margin:0 0 6px;
+  }
+  .tierlist-promo p{
+    font-family:var(--font-body);font-size:13.5px;color:var(--paper-dim);
+    margin:0;max-width:480px;line-height:1.5;
+  }
+  .tierlist-promo-btn{
+    flex:0 0 auto;
+    font-family:var(--font-mono);font-size:13px;font-weight:700;color:#0a0a0b;
+    background:linear-gradient(90deg, var(--copper-1), var(--copper-2));
+    text-decoration:none;padding:12px 22px;border-radius:999px;
+    transition:filter .2s ease, transform .2s ease;
+    white-space:nowrap;
+  }
+  .tierlist-promo-btn:hover{ filter:brightness(1.1); transform:translateY(-1px); }
+  @media (max-width:700px){
+    .tierlist-promo{ flex-direction:column;text-align:center; }
+    .tierlist-promo p{ max-width:none; }
+  }
+
   .ranking-section{
     max-width:1180px;margin:0 auto;
     padding:70px 20px;
@@ -1604,6 +1647,15 @@
 
 <main id="trios"></main>
 
+<section class="tierlist-promo">
+  <div class="tierlist-promo-text">
+    <div class="tierlist-promo-eyebrow">Novo</div>
+    <h3>Monte sua própria tier list</h3>
+    <p>Classifique os MCs (ou trios) do jeito que você acha que eles merecem — arraste, edite as fileiras e salve o resultado como imagem.</p>
+  </div>
+  <a href="tierlist.html" class="tierlist-promo-btn">Crie sua Tier List →</a>
+</section>
+
 <section class="ranking-section" id="ranking">
   <h2 class="compare-title"><svg class="ranking-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4zM7 6H4a3 3 0 0 0 3 3M17 6h3a3 3 0 0 1-3 3"/></svg>Hall da <span>Fama</span></h2>
   <p class="compare-sub">Top 5 por categoria, com base nos dados disponíveis até agora.</p>
@@ -2105,6 +2157,8 @@ trioNav.innerHTML = `
   </div>
   <a href="#ranking" id="navRanking">Hall da Fama</a>
   <a href="#comparar" id="navComparar">Comparar MCs</a>
+  <a href="batalha.html">Modo Batalha</a>
+  <a href="tierlist.html" class="cta-btn">Tier List</a>
 `;
 
 (function initTrioDropdown(){
@@ -3006,30 +3060,30 @@ trioNav.innerHTML = `
   }
 
   function randomMatchup(){
-    if(mode !== 'mc'){
-      mode = 'mc';
-      document.querySelectorAll('#compareModeToggle .mode-btn').forEach(b=>b.classList.toggle('active', b.dataset.mode === 'mc'));
-      rebuildDropdowns();
-    }
     document.getElementById('comparar').scrollIntoView({behavior:'smooth', block:'start'});
 
-    const shuffled = [...allMcs].sort(()=>Math.random()-0.5);
+    const isTrioMode = mode === 'trio';
+    const pool = isTrioMode ? DATA : allMcs;
+    const shuffled = [...pool].sort(()=>Math.random()-0.5);
     const [finalA, finalB] = shuffled.slice(0,2);
+
+    function photoOf(item){ return isTrioMode ? item.fotoTrioUrl : item.fotoUrl; }
+    function nameOf(item){ return isTrioMode ? item.trio : item.nome; }
 
     result.innerHTML = `
       <div class="h2h roulette-spin">
         <div class="h2h-top">
           <div class="h2h-player side-a">
-            <div class="h2h-photo"><img id="rouletteImgA" src="${finalA.fotoUrl}" alt=""></div>
-            <div class="h2h-name" id="rouletteNameA">${finalA.nome}</div>
+            <div class="h2h-photo${isTrioMode ? ' trio-photo' : ''}"><img id="rouletteImgA" src="${photoOf(finalA)}" alt=""></div>
+            <div class="h2h-name" id="rouletteNameA">${nameOf(finalA)}</div>
           </div>
           <div class="h2h-mid">
             <div class="h2h-eyebrow">Sorteando…</div>
             <div class="h2h-matchup"><span class="vs">🎲</span></div>
           </div>
           <div class="h2h-player side-b">
-            <div class="h2h-photo"><img id="rouletteImgB" src="${finalB.fotoUrl}" alt=""></div>
-            <div class="h2h-name" id="rouletteNameB">${finalB.nome}</div>
+            <div class="h2h-photo${isTrioMode ? ' trio-photo' : ''}"><img id="rouletteImgB" src="${photoOf(finalB)}" alt=""></div>
+            <div class="h2h-name" id="rouletteNameB">${nameOf(finalB)}</div>
           </div>
         </div>
       </div>`;
@@ -3045,10 +3099,10 @@ trioNav.innerHTML = `
     function spinTick(){
       tick++;
       const last = tick >= maxTicks;
-      const mcA = last ? finalA : allMcs[Math.floor(Math.random()*allMcs.length)];
-      const mcB = last ? finalB : allMcs[Math.floor(Math.random()*allMcs.length)];
-      imgA.src = mcA.fotoUrl; nameA.textContent = mcA.nome;
-      imgB.src = mcB.fotoUrl; nameB.textContent = mcB.nome;
+      const itemA = last ? finalA : pool[Math.floor(Math.random()*pool.length)];
+      const itemB = last ? finalB : pool[Math.floor(Math.random()*pool.length)];
+      imgA.src = photoOf(itemA); nameA.textContent = nameOf(itemA);
+      imgB.src = photoOf(itemB); nameB.textContent = nameOf(itemB);
 
       if(!last){
         const progress = tick / maxTicks;
@@ -3059,8 +3113,8 @@ trioNav.innerHTML = `
         if(wrap) wrap.classList.add('landed');
         setTimeout(()=>{
           state.A = finalA; state.B = finalB;
-          selectByLabel('compareA', finalA, false);
-          selectByLabel('compareB', finalB, false);
+          selectByLabel('compareA', finalA, isTrioMode);
+          selectByLabel('compareB', finalB, isTrioMode);
           render();
         }, 380);
       }
