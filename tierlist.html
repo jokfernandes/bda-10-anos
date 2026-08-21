@@ -65,7 +65,7 @@
   .topnav-links a{
     font-family:var(--font-mono);font-size:12px;font-weight:500;
     text-decoration:none;color:var(--paper-dim);white-space:nowrap;
-    padding:8px 12px;border-radius:3px;transition:color .15s, background .15s;
+    padding:8px 14px;border-radius:999px;transition:color .15s, background .15s;
   }
   .topnav-links a:hover{color:#0a0a0b;background:var(--sage-1);}
   .topnav-links a.cta-btn{
@@ -73,6 +73,8 @@
     color:#0a0a0b;font-weight:700;padding:8px 16px;border-radius:999px;
   }
   .topnav-links a.cta-btn:hover{ filter:brightness(1.1); background:linear-gradient(90deg, var(--copper-1), var(--copper-2)); }
+  .topnav-links a.cta-btn.cta-sage{ background:linear-gradient(90deg, var(--sage-1), var(--sage-2)); }
+  .topnav-links a.cta-btn.cta-sage:hover{ background:linear-gradient(90deg, var(--sage-1), var(--sage-2)); filter:brightness(1.1); }
   .topnav-links a.active{color:#0a0a0b;background:var(--copper-1);}
 
   /* ---------- HERO DA TIER LIST ---------- */
@@ -223,6 +225,13 @@
   }
   .footer-note a{ color:var(--sage-1);text-decoration:none; }
 
+  .tl-cors-warning{
+    display:none;max-width:520px;margin:16px auto 0;
+    font-family:var(--font-mono);font-size:11.5px;line-height:1.6;
+    color:var(--copper-1);background:rgba(240,168,105,0.08);
+    border:1px solid rgba(240,168,105,0.35);border-radius:8px;padding:12px 16px;
+  }
+  .tl-cors-warning.show{ display:block; }
   #tlToast{
     position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
     background:var(--card);border:1px solid var(--sage-1);border-radius:999px;
@@ -241,7 +250,7 @@
       <div class="topnav-links">
         <a href="index.html">← Voltar ao site</a>
         <a href="tierlist.html" class="active">Tier List</a>
-        <a href="batalha.html">Modo Batalha</a>
+        <a href="batalha.html" class="cta-btn cta-sage">Modo Batalha</a>
       </div>
     </div>
   </div>
@@ -266,6 +275,11 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
       Salvar como imagem
     </button>
+  </div>
+  <div class="tl-cors-warning" id="tlCorsWarning">
+    As fotos não puderam ser incluídas na imagem. Isso acontece quando a página é aberta
+    direto do arquivo no computador — publique o site e tente pelo endereço
+    <b>jokfernandes.github.io</b>, que é o domínio autorizado no bucket.
   </div>
 </div>
 
@@ -479,39 +493,69 @@ function showToast(msg){
 // Converte as fotos para dados embutidos antes de gerar a imagem.
 // Isso evita o bloqueio do navegador ao "capturar" imagens de outro domínio,
 // sem interferir na exibição normal das fotos na tela.
+async function toDataUrl(src){
+  const resp = await fetch(src, { mode:'cors', cache:'no-store' });
+  if(!resp.ok) throw new Error('HTTP '+resp.status);
+  const blob = await resp.blob();
+  return await new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=>resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+function swapSrc(img, dataUrl){
+  return new Promise((resolve)=>{
+    const done = ()=>resolve();
+    img.onload = done;
+    img.onerror = done;
+    img.src = dataUrl;
+    // se carregar instantaneamente (data URL em cache), destrava mesmo assim
+    if(img.complete && img.naturalWidth) done();
+    setTimeout(done, 3000);
+  });
+}
+
+// Troca as fotos por dados embutidos antes de gerar a imagem.
+// Sem isso, o navegador se recusa a "capturar" imagens vindas de outro domínio.
 async function inlineImagesForCapture(container){
   const imgs = Array.from(container.querySelectorAll('img'));
   const originals = [];
-  await Promise.all(imgs.map(async (img)=>{
+  let failed = 0;
+  for(const img of imgs){
     const src = img.getAttribute('src');
-    if(!src || src.startsWith('data:')) return;
-    originals.push({ img, src });
+    if(!src || src.startsWith('data:')) continue;
     try{
-      const resp = await fetch(src, { mode:'cors', cache:'reload' });
-      const blob = await resp.blob();
-      const dataUrl = await new Promise((resolve, reject)=>{
-        const reader = new FileReader();
-        reader.onload = ()=>resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-      img.setAttribute('src', dataUrl);
-      await new Promise(r=>{ img.onload = r; img.onerror = r; });
-    }catch(e){ /* mantém o src original se falhar */ }
-  }));
-  return originals;
+      const dataUrl = await toDataUrl(src);
+      originals.push({ img, src });
+      await swapSrc(img, dataUrl);
+    }catch(e){
+      failed++;
+    }
+  }
+  return { originals, failed, total: imgs.length };
 }
 
 function restoreImages(originals){
-  originals.forEach(({img, src})=>img.setAttribute('src', src));
+  originals.forEach(({img, src})=>{ img.onload = null; img.onerror = null; img.src = src; });
 }
 
 document.getElementById('tlSaveBtn').addEventListener('click', async ()=>{
   const target = document.getElementById('tlBoard');
+  const btn = document.getElementById('tlSaveBtn');
+  btn.disabled = true;
   showToast('Gerando imagem…');
   let originals = [];
   try{
-    originals = await inlineImagesForCapture(target);
+    const result = await inlineImagesForCapture(target);
+    originals = result.originals;
+
+    if(result.failed > 0 && result.originals.length === 0 && result.total > 0){
+      showToast('As fotos foram bloqueadas — veja o aviso abaixo do botão.');
+      document.getElementById('tlCorsWarning').classList.add('show');
+    }
+
     const canvas = await html2canvas(target, {
       backgroundColor: '#101b15',
       scale: 2,
@@ -522,11 +566,12 @@ document.getElementById('tlSaveBtn').addEventListener('click', async ()=>{
     link.download = 'tierlist-bda-10-anos.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
-    showToast('Imagem salva!');
+    if(!(result.failed > 0 && result.originals.length === 0)) showToast('Imagem salva!');
   }catch(err){
     showToast('Não foi possível gerar a imagem.');
   }finally{
     restoreImages(originals);
+    btn.disabled = false;
   }
 });
 

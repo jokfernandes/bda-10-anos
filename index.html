@@ -112,7 +112,7 @@
     font-size:12px;font-weight:500;
     text-decoration:none;color:var(--paper-dim);
     white-space:nowrap;
-    padding:8px 12px;border-radius:3px;
+    padding:8px 14px;border-radius:999px;
     transition:color .15s, background .15s;
   }
   .topnav-links a:hover{color:#0a0a0b;background:var(--sage-1);}
@@ -126,6 +126,13 @@
     background:linear-gradient(90deg, var(--copper-1), var(--copper-2));
     filter:brightness(1.1);color:#0a0a0b;
   }
+  .topnav-links a.cta-btn.cta-sage{
+    background:linear-gradient(90deg, var(--sage-1), var(--sage-2));
+  }
+  .topnav-links a.cta-btn.cta-sage:hover{
+    background:linear-gradient(90deg, var(--sage-1), var(--sage-2));
+    filter:brightness(1.1);color:#0a0a0b;
+  }
 
   /* ---------- NAV: TRIO DROPDOWN ---------- */
   .nav-trio-dropdown{
@@ -134,7 +141,7 @@
   .nav-trio-dropdown .mc-dropdown-trigger{
     width:auto;
     background:none;border:none;
-    padding:8px 12px;border-radius:3px;
+    padding:8px 14px;border-radius:999px;
     font-family:var(--font-mono);font-size:12px;font-weight:500;
     color:var(--paper-dim);
     gap:6px;
@@ -2157,7 +2164,7 @@ trioNav.innerHTML = `
   </div>
   <a href="#ranking" id="navRanking">Hall da Fama</a>
   <a href="#comparar" id="navComparar">Comparar MCs</a>
-  <a href="batalha.html">Modo Batalha</a>
+  <a href="batalha.html" class="cta-btn cta-sage">Modo Batalha</a>
   <a href="tierlist.html" class="cta-btn">Tier List</a>
 `;
 
