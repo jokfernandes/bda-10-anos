@@ -141,14 +141,16 @@
   }
   .tl-row:last-child{ border-bottom:none; }
   .tl-row-label{
-    flex:0 0 110px;display:flex;align-items:center;justify-content:center;
+    flex:0 0 150px;display:flex;align-items:center;justify-content:center;
     position:relative;padding:10px;text-align:center;
   }
-  @media (max-width:600px){ .tl-row-label{ flex-basis:76px;padding:6px; } }
+  @media (max-width:600px){ .tl-row-label{ flex-basis:100px;padding:6px; } }
   .tl-row-label-text{
     font-family:var(--font-display);font-size:18px;text-transform:uppercase;
     color:#0a0a0b;background:none;border:none;text-align:center;
     width:100%;outline:none;cursor:text;line-height:1.2;
+    resize:none;overflow:hidden;white-space:normal;word-break:break-word;
+    display:block;font-weight:inherit;padding:0;
   }
   .tl-row-label-text:focus{ text-decoration:underline; }
   .tl-row-remove{
@@ -353,7 +355,7 @@ function render(){
     <div class="tl-row" data-row-id="${row.id}">
       <div class="tl-row-label" style="background:${row.bg}">
         <button type="button" class="tl-row-remove" data-remove-row="${row.id}" title="Remover fileira">✕</button>
-        <input class="tl-row-label-text" data-row-label="${row.id}" value="${row.label}" maxlength="16">
+        <textarea class="tl-row-label-text" data-row-label="${row.id}" maxlength="60" rows="1">${escapeHtml(row.label)}</textarea>
       </div>
       <div class="tl-row-drop" data-row-drop="${row.id}"></div>
     </div>
@@ -389,11 +391,33 @@ function buildItemEl(item){
   return el;
 }
 
+function escapeHtml(str){
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// Ajusta a altura da textarea do nome da fileira para caber todo o texto
+// (inclusive quebrando linha), em vez de cortar o que não coube.
+function autoResizeLabel(el){
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
 function attachRowEvents(){
-  document.querySelectorAll('[data-row-label]').forEach(input=>{
-    input.addEventListener('change', ()=>{
-      const row = rows.find(r=>r.id===input.dataset.rowLabel);
-      if(row) row.label = input.value || row.label;
+  document.querySelectorAll('[data-row-label]').forEach(textarea=>{
+    autoResizeLabel(textarea);
+    textarea.addEventListener('input', ()=>{
+      autoResizeLabel(textarea);
+      const row = rows.find(r=>r.id===textarea.dataset.rowLabel);
+      if(row) row.label = textarea.value;
+    });
+    textarea.addEventListener('change', ()=>{
+      const row = rows.find(r=>r.id===textarea.dataset.rowLabel);
+      if(row) row.label = textarea.value || row.label;
+    });
+    textarea.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); textarea.blur(); }
     });
   });
   document.querySelectorAll('[data-remove-row]').forEach(btn=>{
