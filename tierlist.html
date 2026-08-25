@@ -318,7 +318,15 @@ const EXTRA_PALETTE = ['#9fb3a5','#7a8f7e','#c9a26a','#8a6a12','#6b7280'];
 let mode = 'mc';
 let rows = [];
 let rowSeq = 0;
-let itemPlacement = {}; // itemId -> rowId ('bank' se não classificado)
+let placement = {}; // rowId ou 'bank' -> array de itemIds, NA ORDEM em que aparecem
+
+function findItemZone(id){
+  for(const key in placement){
+    const idx = placement[key].indexOf(id);
+    if(idx !== -1) return { key, idx };
+  }
+  return null;
+}
 
 function allMcs(){ return DATA.flatMap(t=>t.mcs); }
 function itemsForMode(){
@@ -334,8 +342,8 @@ function defaultRows(){
 function resetBoard(){
   rows = defaultRows();
   const items = itemsForMode();
-  itemPlacement = {};
-  items.forEach(it => itemPlacement[it.id] = 'bank');
+  placement = { bank: items.map(it => it.id) };
+  rows.forEach(r => placement[r.id] = []);
   render();
 }
 
@@ -356,7 +364,7 @@ function render(){
 
   rows.forEach(row=>{
     const dropEl = board.querySelector(`[data-row-drop="${row.id}"]`);
-    Object.entries(itemPlacement).filter(([id,r])=>r===row.id).forEach(([id])=>{
+    (placement[row.id] || []).forEach(id=>{
       const it = itemById[id];
       if(it) dropEl.appendChild(buildItemEl(it));
     });
@@ -364,7 +372,7 @@ function render(){
 
   const bank = document.getElementById('tlBank');
   bank.innerHTML = '';
-  Object.entries(itemPlacement).filter(([id,r])=>r==='bank').forEach(([id])=>{
+  (placement.bank || []).forEach(id=>{
     const it = itemById[id];
     if(it) bank.appendChild(buildItemEl(it));
   });
@@ -391,9 +399,9 @@ function attachRowEvents(){
   document.querySelectorAll('[data-remove-row]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const rowId = btn.dataset.removeRow;
-      Object.keys(itemPlacement).forEach(id=>{
-        if(itemPlacement[id] === rowId) itemPlacement[id] = 'bank';
-      });
+      const orphaned = placement[rowId] || [];
+      placement.bank = (placement.bank || []).concat(orphaned);
+      delete placement[rowId];
       rows = rows.filter(r=>r.id !== rowId);
       render();
     });
@@ -458,7 +466,11 @@ function attachDrag(el){
       const zone = under && under.closest('.tl-row-drop, #tlBank');
       if(zone){
         const rowId = zone.id === 'tlBank' ? 'bank' : zone.dataset.rowDrop;
-        itemPlacement[dragState.itemId] = rowId;
+        const insertIndex = computeInsertIndex(zone, e.clientX, e.clientY, dragState.sourceEl);
+        const current = findItemZone(dragState.itemId);
+        if(current) placement[current.key].splice(current.idx, 1);
+        if(!placement[rowId]) placement[rowId] = [];
+        placement[rowId].splice(insertIndex, 0, dragState.itemId);
       }
       if(dragState.ghost) dragState.ghost.remove();
       document.querySelectorAll('.tl-row-drop, #tlBank').forEach(z=>z.classList.remove('drag-over'));
@@ -466,6 +478,21 @@ function attachDrag(el){
     }
     dragState = null;
   });
+}
+
+// Descobre em que posição (entre os itens já existentes na fileira/banco)
+// o item solto deve entrar, com base em onde o ponteiro foi solto.
+function computeInsertIndex(zone, x, y, excludeEl){
+  const children = Array.from(zone.children).filter(c => c !== excludeEl);
+  for(let i=0;i<children.length;i++){
+    const r = children[i].getBoundingClientRect();
+    if(y < r.top - 4) return i; // ponteiro está acima da linha deste item
+    if(y >= r.top - 4 && y <= r.bottom + 4){
+      const midX = r.left + r.width/2;
+      if(x < midX) return i; // mesma linha, ponteiro à esquerda do centro
+    }
+  }
+  return children.length;
 }
 
 /* ---------- MODO MC / TRIO ---------- */
