@@ -334,6 +334,98 @@
   }
   .bt-path-item span{ font-family:var(--font-mono);font-size:11.5px;color:var(--paper); }
 
+  /* ---------- ALTERNADOR DE MODO (topo) ---------- */
+  .bt-toplevel-toggle{
+    display:flex;justify-content:center;gap:8px;margin:26px auto 0;max-width:1180px;padding:0 20px;
+  }
+  .bt-toplevel-btn{
+    font-family:var(--font-mono);font-size:13px;color:var(--paper-dim);
+    background:var(--card);border:1px solid var(--line);border-radius:999px;
+    padding:9px 20px;cursor:pointer;transition:all .2s ease;
+  }
+  .bt-toplevel-btn:hover{ color:var(--paper); }
+  .bt-toplevel-btn.active{
+    background:linear-gradient(90deg, var(--sage-1), var(--copper-1));
+    color:#0a0a0b;font-weight:700;border-color:transparent;
+  }
+
+  /* ---------- CHAVEAMENTO (chave de 16 trios) ---------- */
+  .ck-wrap{ max-width:1400px;margin:0 auto;padding:30px 20px 70px; }
+  .ck-header{ text-align:center;margin-bottom:26px; }
+  .ck-eyebrow{ font-family:var(--font-mono);font-size:12px;letter-spacing:2px;color:var(--paper-dim);text-transform:uppercase;margin-bottom:8px; }
+  .ck-title{ font-family:var(--font-display);font-size:clamp(26px,4.6vw,40px);text-transform:uppercase;margin:0 0 10px; }
+  .ck-title span{ background:linear-gradient(90deg, var(--copper-1), var(--gold-2)); -webkit-background-clip:text;background-clip:text;color:transparent; }
+  .ck-sub{ max-width:540px;margin:0 auto 20px;color:var(--paper-dim);font-size:14px;line-height:1.6; }
+  .ck-actions{ display:flex;flex-wrap:wrap;gap:10px;justify-content:center; }
+  .ck-actions .bt-mode-btn{ background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 18px;color:var(--paper-dim);font-family:var(--font-mono);font-size:12.5px;cursor:pointer; }
+  .ck-actions .bt-mode-btn:hover{ color:var(--paper); }
+
+  .ck-bank{
+    display:flex;flex-wrap:wrap;gap:12px;justify-content:center;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px;margin-bottom:28px;min-height:70px;
+    max-width:100%;box-sizing:border-box;
+  }
+  .ck-bank:empty{ display:none; }
+  .ck-bank-hint{
+    width:100%;text-align:center;font-family:var(--font-mono);font-size:11px;
+    color:var(--paper-dim);margin-bottom:4px;
+  }
+  .ck-chip{
+    width:94px;text-align:center;cursor:grab;user-select:none;touch-action:none;
+    font-family:var(--font-mono);font-size:10.5px;color:var(--paper);line-height:1.25;
+  }
+  .ck-chip img{ width:94px;height:94px;border-radius:8px;object-fit:cover;object-position:center 20%;border:2px solid var(--line);margin-bottom:5px;pointer-events:none;display:block; }
+  .ck-chip.dragging{ opacity:0.25; }
+  .ck-chip-ghost{
+    position:fixed;z-index:999;pointer-events:none;width:94px;text-align:center;
+    font-family:var(--font-mono);font-size:10.5px;color:var(--paper);
+  }
+  .ck-chip-ghost img{ width:94px;height:94px;border-radius:8px;object-fit:cover;object-position:center 20%;border:2px solid var(--copper-1); }
+
+  .ck-bracket-scroll{ overflow-x:auto;overflow-y:hidden;padding-bottom:6px;-webkit-overflow-scrolling:touch; }
+  .ck-bracket{ display:flex;flex-direction:column;align-items:center;gap:0;padding:10px 0 20px;margin:0 auto; }
+
+  .ck-vround-label{
+    display:flex;align-items:center;gap:12px;margin:26px 0 16px;width:100%;
+    font-family:var(--font-mono);font-size:11.5px;letter-spacing:2px;text-transform:uppercase;color:var(--paper-dim);
+  }
+  .ck-vround-label:first-child{ margin-top:0; }
+  .ck-vround-label::before, .ck-vround-label::after{ content:'';flex:1;height:1px;background:var(--line); }
+
+  .ck-vrow{ display:flex;gap:16px;justify-content:center; } /* gap deve bater com CK_GAP no JS */
+  .ck-vconnrow{ display:flex;gap:16px;justify-content:center; }
+  .ck-vconn path{ stroke:var(--line);stroke-width:2;fill:none; }
+
+  .ck-match-inner{
+    display:flex;flex-direction:column;flex:0 0 auto;
+    background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;
+    transition:border-color .2s ease;
+  }
+  .ck-slot{
+    display:flex;align-items:center;gap:9px;padding:9px 11px;min-height:46px;
+    border-bottom:1px solid var(--line);
+  }
+  .ck-slot:last-child{ border-bottom:none; }
+  .ck-slot.empty{
+    color:var(--paper-dim);font-family:var(--font-mono);font-size:10.5px;font-style:italic;
+  }
+  .ck-slot.drop-target{ cursor:pointer; }
+  .ck-slot.drop-target.drag-over{ background:rgba(183,224,172,0.14); }
+  .ck-slot img{ width:34px;height:34px;border-radius:6px;object-fit:cover;object-position:center 20%;flex:0 0 auto; }
+  .ck-slot span{ font-family:var(--font-mono);font-size:11px;line-height:1.25;white-space:normal;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical; }
+  .ck-slot.playable{ cursor:pointer; }
+  .ck-slot.playable:hover{ background:rgba(240,168,105,0.14); }
+  .ck-slot.winner{ background:rgba(183,224,172,0.14); }
+  .ck-slot.winner span{ color:var(--sage-1);font-weight:700; }
+  .ck-slot.loser{ opacity:0.4; }
+  .ck-slot.loser span{ text-decoration:line-through; }
+  .ck-slot:not(.empty):not(.playable):not(.winner):not(.loser){ cursor:pointer; }
+
+  .ck-bracket .bt-champion{ display:none;margin-top:30px; }
+  .ck-bracket .bt-champion.show{ display:block; }
+  .ck-bracket .bt-path-item img{ border-radius:6px; }
+
   footer{
   footer{
     max-width:1180px;margin:40px auto 0;padding:0 20px 50px;
@@ -361,6 +453,12 @@
   </div>
 </nav>
 
+<div class="bt-toplevel-toggle" id="btTopToggle">
+  <button type="button" class="bt-toplevel-btn active" data-topmode="quick">Sorteio Rápido</button>
+  <button type="button" class="bt-toplevel-btn" data-topmode="chave">Chaveamento (16 Trios)</button>
+</div>
+
+<div id="btQuickMode">
 <div class="bt-hero" id="btHero">
   <div class="bt-eyebrow">Batalha da Aldeia — 10 Anos</div>
   <h1 class="bt-title">Modo <span>Batalha</span></h1>
@@ -405,6 +503,30 @@
     Jogar novamente
   </button>
 </div>
+</div>
+
+<div class="ck-wrap" id="btChaveMode" style="display:none">
+  <div class="ck-header">
+    <div class="ck-eyebrow">16 Trios — Batalha da Aldeia 10 Anos</div>
+    <h2 class="ck-title">Simule o <span>Chaveamento</span></h2>
+    <p class="ck-sub">Sorteie a chave automaticamente ou arraste cada trio para uma vaga das oitavas. Depois é só clicar em quem vence cada confronto.</p>
+    <div class="ck-actions">
+      <button type="button" class="bt-start-btn" id="ckDrawBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M17 3l4 4-4 4M3 7h13a4 4 0 0 1 0 8H7M7 21l-4-4 4-4"/></svg>
+        Sortear chave
+      </button>
+      <button type="button" class="bt-mode-btn" id="ckManualBtn">Montar manualmente</button>
+      <button type="button" class="bt-mode-btn" id="ckResetBtn" style="display:none">Reiniciar</button>
+      <button type="button" class="bt-mode-btn" id="ckSaveBtn" style="display:none">Salvar como imagem</button>
+    </div>
+  </div>
+
+  <div class="ck-bank" id="ckBank"></div>
+
+  <div class="ck-bracket-scroll">
+    <div class="ck-bracket" id="ckBracket"></div>
+  </div>
+</div>
 
 <footer>
   <div class="footer-note">
@@ -412,6 +534,7 @@
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 const DATA = [{"trio": "Primeiro Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Sid.png", "mcs": [{"nome": "Sid", "slug": "sid", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Sid.png"}, {"nome": "Gomes", "slug": "gomes", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Gomes.png"}, {"nome": "Tito", "slug": "tito", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Tito.png"}]}, {"trio": "Segundo Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Ajota.png", "mcs": [{"nome": "Zap", "slug": "zap", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Zap.png"}, {"nome": "Ajota", "slug": "ajota", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Ajota.png"}, {"nome": "Menor", "slug": "menor", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Menor.png"}]}, {"trio": "Terceiro Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Devilzinha.png", "mcs": [{"nome": "Devilzinha", "slug": "devilzinha", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Devilzinha.png"}, {"nome": "Naia", "slug": "naia", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Naia.png"}, {"nome": "Sofia", "slug": "sofia", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Sofia.png"}]}, {"trio": "Quarto Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Dudu.png", "mcs": [{"nome": "Thiago", "slug": "thiago", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Thiago.png"}, {"nome": "Dudu", "slug": "dudu", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Dudu.png"}, {"nome": "Jaya", "slug": "jaya", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Jaya.png"}]}, {"trio": "Quinto Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Grafiteh.png", "mcs": [{"nome": "MT", "slug": "mt", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/MT.png"}, {"nome": "Grafiteh", "slug": "grafiteh", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Grafiteh.png"}, {"nome": "Vitu", "slug": "vitu", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Vitu.png"}]}, {"trio": "Sexto Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Jhony.png", "mcs": [{"nome": "Jhony", "slug": "johny", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Jhony.png"}, {"nome": "Torvi", "slug": "torvi", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Torvi.png"}, {"nome": "Malagueta", "slug": "malagueta", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Malagueta.png"}]}, {"trio": "Sétimo Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20WM.png", "mcs": [{"nome": "WM", "slug": "wm", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/WM.png"}, {"nome": "Valle", "slug": "valle", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Valle.png"}, {"nome": "Acuca", "slug": "acuca", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Acuca.png"}]}, {"trio": "Oitavo Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Neo.png", "mcs": [{"nome": "Neo", "slug": "neo", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Neo.png"}, {"nome": "Japa", "slug": "japa", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Japa.png"}, {"nome": "Levinsk", "slug": "levinsk", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Levinsk.png"}]}, {"trio": "Nono Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Kaemy.png", "mcs": [{"nome": "Kaemy", "slug": "kaemy", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Kaemy.png"}, {"nome": "Winnit", "slug": "winnit", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Winnit.png"}, {"nome": "Vinicius ZN", "slug": "vinicius-zn", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Vinicius%20ZN.png"}]}, {"trio": "Décimo Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Jotap%C3%AA.png", "mcs": [{"nome": "Jotapê", "slug": "jotap", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Jotap%C3%AA.png"}, {"nome": "Apollo", "slug": "apollo", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Apollo.png"}, {"nome": "Negrote", "slug": "negrote", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Negrote.png"}]}, {"trio": "Décimo Primeiro Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Baueb.png", "mcs": [{"nome": "Baueb", "slug": "baueb", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Baueb.png"}, {"nome": "Luh do Click", "slug": "luh-do-click", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Luh.png"}, {"nome": "Mano Ayron", "slug": "mano-ayron", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Mano.png"}]}, {"trio": "Décimo Segundo Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Araps.png", "mcs": [{"nome": "Araps", "slug": "araps", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Araps.png"}, {"nome": "Ravena", "slug": "ravena", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Ravena.png"}, {"nome": "WL BXD", "slug": "wl-bxd", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/WL%20BXD.png"}]}, {"trio": "Décimo Terceiro Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Bask.png", "mcs": [{"nome": "Bask", "slug": "bask", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Bask.png"}, {"nome": "Xamuel", "slug": "xamuel", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Xamuel.png"}, {"nome": "Brennuz", "slug": "brennuz", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Brennuz.png"}]}, {"trio": "Décimo Quarto Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Cesar.png", "mcs": [{"nome": "Cesar", "slug": "cesar", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Cesar.png"}, {"nome": "Big Mike", "slug": "big-mike", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Big.png"}, {"nome": "Barreto", "slug": "barreto", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Barreto.png"}]}, {"trio": "Décimo Quinto Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Prado.png", "mcs": [{"nome": "Prado", "slug": "prado", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Prado.png"}, {"nome": "Salvador", "slug": "salvador", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Salvador.png"}, {"nome": "Magrão", "slug": "magrao", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Magr%C3%A3o.png"}]}, {"trio": "Décimo Sexto Trio", "fotoTrioUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Trio%20Kant.png", "mcs": [{"nome": "Kant", "slug": "kant", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Kant.png"}, {"nome": "Tavin", "slug": "tavin", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Tavin.png"}, {"nome": "Tubarão", "slug": "tubarao", "fotoUrl": "https://pub-6326bb4814464b359a735b2c18ca4125.r2.dev/Fotos/Tubar%C3%A3o.png"}]}];
 
@@ -619,6 +742,346 @@ function renderChampion(champion){
   document.getElementById('btChampion').classList.add('show');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+/* ======================================================================
+   CHAVEAMENTO — chave de 16 trios (sorteio automático ou montagem manual
+   por arrastar-e-soltar), espelhada como uma chave de campeonato real.
+   ====================================================================== */
+document.getElementById('btTopToggle').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.bt-toplevel-btn');
+  if(!btn || btn.classList.contains('active')) return;
+  document.querySelectorAll('.bt-toplevel-btn').forEach(b=>b.classList.toggle('active', b===btn));
+  const target = btn.dataset.topmode;
+  document.getElementById('btQuickMode').style.display = target === 'quick' ? '' : 'none';
+  document.getElementById('btChaveMode').style.display = target === 'chave' ? '' : 'none';
+  if(target === 'chave' && !ckState) ckInit();
+});
+
+let ckState = null;
+let ckDragState = null;
+let ckDefeatedBy = {}; // id do vencedor -> [{round, opponent}, ...] (só derrotas diretas)
+
+const CK_ROUNDS = ['oitavas', 'quartas', 'semi', 'final'];
+const CK_ROUND_LABELS = { oitavas:'Oitavas de Final', quartas:'Quartas de Final', semi:'Semifinal', final:'Final' };
+const CK_ROUND_COUNTS = { oitavas:8, quartas:4, semi:2, final:1 };
+
+// Largura base de um card das oitavas e o espaçamento entre cards/pares.
+// Cada rodada seguinte dobra de largura (2x + o gap entre o par), o que faz
+// com que a linha de cada rodada tenha exatamente a mesma largura total da
+// linha anterior — por isso os cards ficam sempre alinhados certinho debaixo
+// do par que os gerou, sem precisar medir nada via JavaScript.
+//
+// CK_W é recalculado antes de CADA render (ckUpdateBaseWidth), com base no
+// espaço realmente disponível na tela — em vez de desenhar largo demais e
+// tentar encolher tudo depois com transform:scale (que foi a causa do corte
+// nas bordas em telas menores), já desenhamos do tamanho certo desde o início.
+let CK_W = 168;
+const CK_GAP = 16; // tem que bater com o gap do CSS (.ck-vrow / .ck-vconnrow)
+const CK_CONN_H = 26;
+const CK_MIN_W = 108, CK_MAX_W = 190;
+
+function ckUpdateBaseWidth(){
+  const wrap = document.querySelector('.ck-bracket-scroll');
+  const available = wrap ? wrap.clientWidth : 900;
+  const w = Math.floor((available - 7 * CK_GAP) / 8);
+  CK_W = Math.max(CK_MIN_W, Math.min(CK_MAX_W, w));
+}
+
+function ckRoundWidthPx(roundIdx){
+  const n = Math.pow(2, roundIdx);
+  return CK_W * n + CK_GAP * (n - 1);
+}
+
+function ckAllTrios(){
+  return DATA.map((t,i)=>({ id:'trio-'+i, name:ckTrioLabel(t), photo:t.fotoTrioUrl }));
+}
+
+// Monta "Sid, Gomes e Tito" a partir dos nomes dos integrantes do trio,
+// bem mais fácil de reconhecer na hora de escolher quem vence.
+function ckTrioLabel(t){
+  const nomes = t.mcs.map(mc => mc.nome);
+  if(nomes.length <= 1) return nomes.join('');
+  return nomes.slice(0, -1).join(', ') + ' e ' + nomes[nomes.length - 1];
+}
+
+function ckEmptyMatch(){ return { a:null, b:null, winner:null }; }
+
+function ckResetState(){
+  ckState = {};
+  CK_ROUNDS.forEach(round=>{
+    ckState[round] = Array.from({ length: CK_ROUND_COUNTS[round] }, ckEmptyMatch);
+  });
+  ckDefeatedBy = {};
+}
+
+function ckInit(){
+  ckClearStrayGhosts();
+  ckResetState();
+  ckRenderBank();
+  ckRenderBracket();
+}
+
+function ckDraw(){
+  ckClearStrayGhosts();
+  ckResetState();
+  const shuffled = shuffle(ckAllTrios());
+  let i = 0;
+  ckState.oitavas.forEach(m=>{ m.a = shuffled[i++]; m.b = shuffled[i++]; });
+  ckRenderBank();
+  ckRenderBracket();
+}
+
+function ckPlacedIds(){
+  const placed = new Set();
+  ckState.oitavas.forEach(m=>{
+    if(m.a) placed.add(m.a.id);
+    if(m.b) placed.add(m.b.id);
+  });
+  return placed;
+}
+
+function ckRenderBank(){
+  const bank = document.getElementById('ckBank');
+  const placed = ckPlacedIds();
+  const remaining = ckAllTrios().filter(t=>!placed.has(t.id));
+  if(remaining.length === 0){
+    bank.innerHTML = '';
+    return;
+  }
+  bank.innerHTML =
+    '<div class="ck-bank-hint">Arraste cada trio para uma vaga das oitavas, mais abaixo</div>' +
+    remaining.map(t=>`
+      <div class="ck-chip" data-trio-id="${t.id}">
+        <img src="${t.photo}" alt="${t.name}" loading="lazy">
+        <div>${t.name}</div>
+      </div>`).join('');
+  bank.querySelectorAll('.ck-chip').forEach(ckAttachChipDrag);
+}
+
+function ckMoveGhost(x, y){
+  if(!ckDragState) return;
+  ckDragState.ghost.style.left = (x - 47) + 'px';
+  ckDragState.ghost.style.top = (y - 47) + 'px';
+}
+
+// Remove qualquer "fantasma" (clone flutuante do trio sendo arrastado) que
+// eventualmente tenha ficado preso na tela — rede de segurança extra.
+function ckClearStrayGhosts(){
+  document.querySelectorAll('.ck-chip-ghost').forEach(g => g.remove());
+}
+
+function ckAttachChipDrag(el){
+  el.addEventListener('pointerdown', (e)=>{
+    e.preventDefault();
+    ckClearStrayGhosts();
+
+    const ghost = document.createElement('div');
+    ghost.className = 'ck-chip-ghost';
+    ghost.innerHTML = el.innerHTML;
+    document.body.appendChild(ghost);
+    ckDragState = { trioId: el.dataset.trioId, ghost, moved:false };
+    el.classList.add('dragging');
+    ckMoveGhost(e.clientX, e.clientY);
+
+    // Usa listeners na window (em vez de só no chip) e cobre também
+    // "pointercancel" — sem isso, se o navegador cancelar o gesto (comum
+    // em telas de toque, ou ao soltar fora de uma vaga válida) o fantasma
+    // ficava preso na tela pra sempre, sem o drag nunca ser finalizado.
+    const onMove = (ev)=>{
+      if(!ckDragState) return;
+      ckDragState.moved = true;
+      ckMoveGhost(ev.clientX, ev.clientY);
+      document.querySelectorAll('.ck-slot.drop-target').forEach(s=>s.classList.remove('drag-over'));
+      const under = document.elementFromPoint(ev.clientX, ev.clientY);
+      const zone = under && under.closest('.ck-slot.drop-target.empty');
+      if(zone) zone.classList.add('drag-over');
+    };
+
+    const onEnd = (ev)=>{
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onEnd);
+      window.removeEventListener('pointercancel', onEnd);
+      if(!ckDragState) return;
+      if(ev.type === 'pointerup' && ckDragState.moved){
+        const under = document.elementFromPoint(ev.clientX, ev.clientY);
+        const zone = under && under.closest('.ck-slot.drop-target.empty');
+        if(zone){
+          const matchIdx = +zone.dataset.match, slotKey = zone.dataset.slot;
+          const trio = ckAllTrios().find(t=>t.id === ckDragState.trioId);
+          ckState.oitavas[matchIdx][slotKey] = trio;
+          ckRenderBank();
+          ckRenderBracket();
+        }
+      }
+      if(ckDragState.ghost) ckDragState.ghost.remove();
+      document.querySelectorAll('.ck-slot.drop-target').forEach(s=>s.classList.remove('drag-over'));
+      ckDragState = null;
+    };
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onEnd);
+    window.addEventListener('pointercancel', onEnd);
+  });
+}
+
+function ckSlotHTML(round, matchIdx, slotKey){
+  const m = ckState[round][matchIdx];
+  const val = m[slotKey];
+  const other = slotKey === 'a' ? m.b : m.a;
+
+  if(!val){
+    const isDrop = round === 'oitavas';
+    return `<div class="ck-slot empty${isDrop ? ' drop-target' : ''}" data-round="${round}" data-match="${matchIdx}" data-slot="${slotKey}">${isDrop ? 'Arraste um trio' : '—'}</div>`;
+  }
+  let cls = 'ck-slot';
+  if(m.winner) cls += (m.winner.id === val.id) ? ' winner' : ' loser';
+  else if(other) cls += ' playable';
+  return `<div class="${cls}" data-round="${round}" data-match="${matchIdx}" data-slot="${slotKey}">
+    <img src="${val.photo}" alt="${val.name}" loading="lazy"><span>${val.name}</span>
+  </div>`;
+}
+
+function ckMatchHTML(round, matchIdx, widthPx){
+  return `<div class="ck-match"><div class="ck-match-inner" style="width:${widthPx}px">
+    ${ckSlotHTML(round, matchIdx, 'a')}
+    ${ckSlotHTML(round, matchIdx, 'b')}
+  </div></div>`;
+}
+
+function ckRowHTML(round){
+  const idx = CK_ROUNDS.indexOf(round);
+  const w = ckRoundWidthPx(idx);
+  return `<div class="ck-vrow">${ckState[round].map((m,i)=>ckMatchHTML(round,i,w)).join('')}</div>`;
+}
+
+// Linhas conectando cada par de confrontos de uma rodada ao confronto único
+// que eles geram na rodada seguinte — o que deixa claro, visualmente, quem
+// avança pra onde (a "cara de chave" que estava faltando).
+function ckConnectorRowHTML(round){
+  const idx = CK_ROUNDS.indexOf(round);
+  const wThis = ckRoundWidthPx(idx);
+  const wNext = ckRoundWidthPx(idx + 1);
+  const leftX = wThis / 2;
+  const rightX = wNext - wThis / 2;
+  const midX = wNext / 2;
+  const cellsCount = ckState[round].length / 2;
+  const cell = `<svg class="ck-vconn" width="${wNext}" height="${CK_CONN_H}" viewBox="0 0 ${wNext} ${CK_CONN_H}">
+    <path d="M ${leftX} 0 V ${CK_CONN_H/2} H ${rightX} V 0"/>
+    <path d="M ${midX} ${CK_CONN_H/2} V ${CK_CONN_H}"/>
+  </svg>`;
+  return `<div class="ck-vconnrow">${cell.repeat(cellsCount)}</div>`;
+}
+
+function ckChampionHTML(){
+  const champ = ckState.final[0].winner;
+  if(!champ) return '';
+  const beaten = ckDefeatedBy[champ.id] || [];
+  return `
+    <div class="bt-champion show">
+      <div class="bt-champion-glow"></div>
+      <div class="bt-rays"></div>
+      <div class="bt-champion-icon">🏆</div>
+      <div class="bt-champion-label">Temos um campeão</div>
+      <div class="bt-champion-card trio-champion">
+        <div class="bt-fighter-photo"><img src="${champ.photo}" alt="${champ.name}"></div>
+        <div class="bt-fighter-name">${champ.name}</div>
+      </div>
+      <div class="bt-champion-title">Parabéns, <span>${champ.name}</span>!</div>
+      <div class="bt-path">
+        <div class="bt-path-title">Caminho até o título — ${beaten.length} ${beaten.length === 1 ? 'confronto vencido' : 'confrontos vencidos'}</div>
+        <div class="bt-path-list">
+          ${beaten.map((b,i)=>`
+            <div class="bt-path-item" style="animation-delay:${i*0.08}s">
+              <img src="${b.opponent.photo}" alt="${b.opponent.name}" loading="lazy">
+              <span>${CK_ROUND_LABELS[b.round]}: venceu ${b.opponent.name}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function ckRenderBracket(){
+  const el = document.getElementById('ckBracket');
+  ckUpdateBaseWidth();
+  let html = '';
+  CK_ROUNDS.forEach((round, idx)=>{
+    html += `<div class="ck-vround-label">${CK_ROUND_LABELS[round]}</div>`;
+    html += ckRowHTML(round);
+    if(idx < CK_ROUNDS.length - 1) html += ckConnectorRowHTML(round);
+  });
+  html += ckChampionHTML();
+  el.innerHTML = html;
+  document.getElementById('ckResetBtn').style.display = 'inline-block';
+  document.getElementById('ckSaveBtn').style.display = 'inline-block';
+  if(ckState.final[0].winner){
+    const champEl = el.querySelector('.bt-champion');
+    if(champEl) setTimeout(()=>champEl.scrollIntoView({ behavior:'smooth', block:'center' }), 100);
+  }
+}
+
+let ckResizeTimer = null;
+window.addEventListener('resize', ()=>{
+  clearTimeout(ckResizeTimer);
+  ckResizeTimer = setTimeout(()=>{ if(ckState) ckRenderBracket(); }, 150);
+});
+
+// Empurra o vencedor de um confronto para a vaga correspondente na próxima
+// fase, e registra o adversário direto vencido (pra montar o "caminho até
+// o título" do campeão no final).
+function ckAdvance(round, matchIdx, winner, loser){
+  ckState[round][matchIdx].winner = winner;
+  if(!ckDefeatedBy[winner.id]) ckDefeatedBy[winner.id] = [];
+  ckDefeatedBy[winner.id].push({ round, opponent: loser });
+
+  const rIdx = CK_ROUNDS.indexOf(round);
+  if(rIdx === CK_ROUNDS.length - 1) { ckRenderBracket(); return; } // final não avança mais
+  const nextRound = CK_ROUNDS[rIdx + 1];
+  const nextMatch = Math.floor(matchIdx / 2), slotKey = matchIdx % 2 === 0 ? 'a' : 'b';
+  ckState[nextRound][nextMatch][slotKey] = winner;
+  ckRenderBracket();
+}
+
+document.getElementById('ckBracket').addEventListener('click', (e)=>{
+  const slotEl = e.target.closest('.ck-slot');
+  if(!slotEl) return;
+
+  const round = slotEl.dataset.round, matchIdx = +slotEl.dataset.match, slotKey = slotEl.dataset.slot;
+  const m = ckState[round][matchIdx];
+  if(m.winner) return;
+  const val = m[slotKey];
+  if(!val) return;
+  const other = slotKey === 'a' ? m.b : m.a;
+  if(!other){
+    if(round !== 'oitavas') return;
+    m[slotKey] = null;
+    ckRenderBank();
+    ckRenderBracket();
+    return;
+  }
+  ckAdvance(round, matchIdx, val, other);
+});
+
+document.getElementById('ckDrawBtn').addEventListener('click', ckDraw);
+document.getElementById('ckManualBtn').addEventListener('click', ckInit);
+document.getElementById('ckResetBtn').addEventListener('click', ckInit);
+document.getElementById('ckSaveBtn').addEventListener('click', async ()=>{
+  const btn = document.getElementById('ckSaveBtn');
+  const original = btn.textContent;
+  btn.textContent = 'Gerando imagem...';
+  btn.disabled = true;
+  try{
+    const canvas = await html2canvas(document.getElementById('ckBracket'), { backgroundColor:'#070c09', scale:2 });
+    const link = document.createElement('a');
+    link.download = 'chaveamento-bda-10-anos.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch(err){
+    alert('Não foi possível gerar a imagem agora.');
+  } finally {
+    btn.textContent = original;
+    btn.disabled = false;
+  }
+});
 </script>
 </body>
 </html>
