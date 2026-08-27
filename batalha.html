@@ -1125,6 +1125,54 @@ document.getElementById('ckBracket').addEventListener('click', (e)=>{
 });
 
 document.getElementById('ckDrawBtn').addEventListener('click', ckDraw);
+// Converte as fotos para dados embutidos antes de gerar a imagem.
+// Isso evita o bloqueio do navegador ao "capturar" imagens de outro domínio,
+// sem interferir na exibição normal das fotos na tela.
+async function ckToDataUrl(src){
+  const resp = await fetch(src, { mode:'cors', cache:'no-store' });
+  if(!resp.ok) throw new Error('HTTP '+resp.status);
+  const blob = await resp.blob();
+  return await new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=>resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+function ckSwapSrc(img, dataUrl){
+  return new Promise((resolve)=>{
+    const done = ()=>resolve();
+    img.onload = done;
+    img.onerror = done;
+    img.src = dataUrl;
+    if(img.complete && img.naturalWidth) done();
+    setTimeout(done, 3000);
+  });
+}
+
+async function ckInlineImagesForCapture(container){
+  const imgs = Array.from(container.querySelectorAll('img'));
+  const originals = [];
+  let failed = 0;
+  for(const img of imgs){
+    const src = img.getAttribute('src');
+    if(!src || src.startsWith('data:')) continue;
+    try{
+      const dataUrl = await ckToDataUrl(src);
+      originals.push({ img, src });
+      await ckSwapSrc(img, dataUrl);
+    }catch(e){
+      failed++;
+    }
+  }
+  return { originals, failed, total: imgs.length };
+}
+
+function ckRestoreImages(originals){
+  originals.forEach(({img, src})=>{ img.onload = null; img.onerror = null; img.src = src; });
+}
+
 document.getElementById('ckManualBtn').addEventListener('click', ckInit);
 document.getElementById('ckResetBtn').addEventListener('click', ckInit);
 document.getElementById('ckSaveBtn').addEventListener('click', async ()=>{
@@ -1132,15 +1180,23 @@ document.getElementById('ckSaveBtn').addEventListener('click', async ()=>{
   const original = btn.textContent;
   btn.textContent = 'Gerando imagem...';
   btn.disabled = true;
+  const container = document.getElementById('ckBracket');
+  let originals = [];
   try{
-    const canvas = await html2canvas(document.getElementById('ckBracket'), { backgroundColor:'#070c09', scale:2 });
+    const result = await ckInlineImagesForCapture(container);
+    originals = result.originals;
+    const canvas = await html2canvas(container, { backgroundColor:'#070c09', scale:2, useCORS:true, allowTaint:false });
     const link = document.createElement('a');
     link.download = 'chaveamento-bda-10-anos.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
+    if(result.failed > 0 && result.originals.length === 0 && result.total > 0){
+      alert('A imagem foi baixada, mas as fotos não puderam ser incluídas — provavelmente por causa da política de CORS do bucket. Confira se o domínio de onde o site está sendo aberto está autorizado no R2.');
+    }
   } catch(err){
     alert('Não foi possível gerar a imagem agora.');
   } finally {
+    ckRestoreImages(originals);
     btn.textContent = original;
     btn.disabled = false;
   }
