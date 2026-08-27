@@ -311,6 +311,28 @@
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
 
+  /* ---------- ESTADO "CAPTURANDO" (usado só na hora de gerar o PNG) ----------
+     O html2canvas não suporta bem CSS3 animations/transitions nem texto em
+     gradiente (background-clip:text). Sem isto, itens que ainda não tinham
+     "disparado" a animação de entrada saíam invisíveis na imagem exportada,
+     e o "Parabéns, <nome>!" saía em branco. Esta classe congela tudo num
+     estado final e legível só durante a captura. */
+  #ckBracket.ck-capturing *,
+  #ckBracket.ck-capturing *::before,
+  #ckBracket.ck-capturing *::after{
+    animation:none !important;
+  }
+  #ckBracket.ck-capturing .bt-path-item{
+    opacity:1 !important;transform:none !important;
+  }
+  #ckBracket.ck-capturing .bt-champion-card{
+    opacity:1 !important;transform:none !important;
+  }
+  #ckBracket.ck-capturing .bt-champion-title span{
+    background:none !important;-webkit-background-clip:initial !important;background-clip:initial !important;
+    color:var(--gold-1) !important;-webkit-text-fill-color:var(--gold-1) !important;
+  }
+
   /* ---------- CAMINHO PARA A VITÓRIA ---------- */
   .bt-path{
     max-width:640px;margin:26px auto 30px;
@@ -1185,6 +1207,10 @@ document.getElementById('ckSaveBtn').addEventListener('click', async ()=>{
   try{
     const result = await ckInlineImagesForCapture(container);
     originals = result.originals;
+    container.classList.add('ck-capturing');
+    // dá um instante pro navegador aplicar as regras (animation:none etc.)
+    // antes de tirar o "retrato" da tela.
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     const canvas = await html2canvas(container, { backgroundColor:'#070c09', scale:2, useCORS:true, allowTaint:false });
     const link = document.createElement('a');
     link.download = 'chaveamento-bda-10-anos.png';
@@ -1196,6 +1222,7 @@ document.getElementById('ckSaveBtn').addEventListener('click', async ()=>{
   } catch(err){
     alert('Não foi possível gerar a imagem agora.');
   } finally {
+    container.classList.remove('ck-capturing');
     ckRestoreImages(originals);
     btn.textContent = original;
     btn.disabled = false;
